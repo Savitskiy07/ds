@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+
+<h2>Поиск книг</h2>
+
+<input type="text" id="bookInput" placeholder="Введите название книги">
+<button id="searchButton">Поиск</button>
+
+<div id="results"></div>
+
+<div id="purchaseForm" class="container" style="display: none;">
+    <form method="post" action="https://script.google.com/macros/s/AKfycbxROjIFYBubnKxZnlr12fPMamQrw-Hyoh8Om51GfsGfn0UWYiGrdIZH4VzKj0NFX7ceRw/exec"
+    name="contact-form">
+        <h2>Форма покупки</h2>
+        <input type="text" name="name" placeholder="Имя">
+        <input type="text" name="email" placeholder="Почта">
+        <input type="text" name="phone" placeholder="Телефон">
+        <input type="text" name="address" placeholder="Адрес">
+        <button id="submitButton">Отправить</button>
+    </form>
+</div>
+
+<script>
+$(document).ready(function(){
+    document.cookie = "mycookie=value; SameSite=None; Secure";
+    $("#searchButton").click(function(){
+        var bookName = $("#bookInput").val();
+        var url = "https://www.googleapis.com/books/v1/volumes?q=" + bookName;
+        $.get(url, function(data){
+            $("#results").empty();
+            for(var i=0; i<data.items.length; i++){
+                var title = data.items[i].volumeInfo.title;
+                var authors = data.items[i].volumeInfo.authors;
+                $("#results").append("<p>" + title + " by " + authors + "</p><button class='buyButton'>Купить</button>");
+            }
+        });
+    });
+
+    $(document).on('click', '.buyButton', function(){
+        $("#purchaseForm").show();
+        $('html, body').animate({
+            scrollTop: $("#purchaseForm").offset().top
+        }, 2000);
+    });
+
+    $("#submitButton").click(function(){
+        // pass
+        $("#purchaseForm").hide();
+    });
+});
+</script>
+
+</body>
+</html>
